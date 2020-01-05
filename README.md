@@ -2,19 +2,12 @@
 
 Android SDK development environment Docker image
 
-[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-info-blue.svg)](https://hub.docker.com/r/thyrlian/android-sdk/)
-[![Docker Stars](https://img.shields.io/docker/stars/thyrlian/android-sdk.svg)](https://hub.docker.com/r/thyrlian/android-sdk/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/thyrlian/android-sdk.svg)](https://hub.docker.com/r/thyrlian/android-sdk/)
-[![Image Size & Layers](https://images.microbadger.com/badges/image/thyrlian/android-sdk.svg)](https://microbadger.com/images/thyrlian/android-sdk)
-[![Build Status](https://travis-ci.org/thyrlian/AndroidSDK.svg?branch=master)](https://travis-ci.org/thyrlian/AndroidSDK)
-[![Android Dev Digest](https://img.shields.io/badge/AndroidDevDigest-%23127-green.svg)](https://www.androiddevdigest.com/digest-127/)
-[![Android开发技术周报](https://img.shields.io/badge/Android%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E5%91%A8%E6%8A%A5-%23114-yellowgreen.svg)](http://www.androidweekly.cn/android-dev-weekly-issue-114/)
-
-[![Docker Badge](https://dockeri.co/image/thyrlian/android-sdk)](https://hub.docker.com/r/thyrlian/android-sdk)
-
-<img src="https://github.com/thyrlian/AndroidSDK/blob/master/images/logo.png?raw=true" width="200">
-
-<a href="https://youtu.be/YwBAqMDYFCU"><img src="https://pbs.twimg.com/media/DODnbwmXkAAbXuM.jpg" alt="Conference Talk" width="600"></a>
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-info-blue.svg)](https://hub.docker.com/r/minddocdev/android-sdk/)
+[![Docker Stars](https://img.shields.io/docker/stars/thyrlian/android-sdk.svg)](https://hub.docker.com/r/minddocdev/android-sdk/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/thyrlian/android-sdk.svg)](https://hub.docker.com/r/minddocdev/android-sdk/)
+[![Image Size & Layers](https://images.microbadger.com/badges/image/thyrlian/android-sdk.svg)](https://microbadger.com/images/minddocdev/android-sdk)
+[![Build Status](https://github.com/minddocdev/android-sdk/workflows/code/badge.svg)](https://github.com/minddocdev/android-sdk/actions?workflow=code)
+[![Docker Badge](https://dockeri.co/image/minddocdev/android-sdk)](https://hub.docker.com/r/minddocdev/android-sdk)
 
 ## Goals
 
@@ -54,10 +47,10 @@ What happens if the update fails?
   ls $ANDROID_HOME/tools/
   #=> empty, nothing is there
   # tools such as: android, sdkmanager, emulator, lint and etc. are gone
-  
+
   android
   #=> bash: android: command not found
-  
+
   sdkmanager
   #=> bash: /opt/android-sdk/tools/bin/sdkmanager: No such file or directory
   ```
@@ -73,10 +66,10 @@ If you by accident update SDK on a host machine which has a mismatch target arch
   ```bash
   gradle <some_task>
   #=> Error: java.util.concurrent.ExecutionException: java.lang.RuntimeException: AAPT process not ready to receive commands
-  
+
   $ANDROID_HOME/build-tools/x.x.x/aapt
   #=> aapt: cannot execute binary file: Exec format error
-  
+
   adb
   #=> adb: cannot execute binary file: Exec format error
   ```
@@ -120,12 +113,12 @@ docker build -t android-sdk android-sdk
 # or you can also pass specific tool version as you wish (optional, while there is default version)
 docker build --build-arg GRADLE_VERSION=<gradle_version> --build-arg KOTLIN_VERSION=<kotlin_version> --build-arg ANDROID_SDK_VERSION=<android_sdk_version> -t android-sdk android-sdk
 # or pull the image instead of building on your own
-docker pull thyrlian/android-sdk
+docker pull minddocdev/android-sdk
 
 # below commands assume that you've pulled the image
 
 # copy the pre-downloaded SDK to the mounted 'sdk' directory
-docker run -it --rm -v $(pwd)/sdk:/sdk thyrlian/android-sdk bash -c 'cp -a $ANDROID_HOME/. /sdk'
+docker run -it --rm -v $(pwd)/sdk:/sdk minddocdev/android-sdk bash -c 'cp -a $ANDROID_HOME/. /sdk'
 
 # go to the 'sdk' directory on the host, update the SDK
 # ONLY IF the host machine is the same target architecture as the container
@@ -138,17 +131,17 @@ sdk/tools/bin/sdkmanager "build-tools;x.y.z" "platforms;android-x" ...
 # if the host SDK directory is mounted to more than one container
 # to avoid multiple containers writing to the SDK directory at the same time
 # you should mount the SDK volume in read-only mode
-docker run -it -v $(pwd)/sdk:/opt/android-sdk:ro thyrlian/android-sdk /bin/bash
+docker run -it -v $(pwd)/sdk:/opt/android-sdk:ro minddocdev/android-sdk /bin/bash
 
 # you can mount without read-only option, only if you need to update SDK inside container
-docker run -it -v $(pwd)/sdk:/opt/android-sdk thyrlian/android-sdk /bin/bash
+docker run -it -v $(pwd)/sdk:/opt/android-sdk minddocdev/android-sdk /bin/bash
 
 # to keep and reuse Gradle cache
-docker run -it -v $(pwd)/sdk:/opt/android-sdk -v $(pwd)/gradle_caches:/root/.gradle/caches thyrlian/android-sdk /bin/bash
+docker run -it -v $(pwd)/sdk:/opt/android-sdk -v $(pwd)/gradle_caches:/root/.gradle/caches minddocdev/android-sdk /bin/bash
 
 # to stop and remove container
 # when the image was pulled from a registry
-docker stop $(docker ps -aqf "ancestor=thyrlian/android-sdk") &> /dev/null && docker rm $(docker ps -aqf "ancestor=thyrlian/android-sdk") &> /dev/null
+docker stop $(docker ps -aqf "ancestor=minddocdev/android-sdk") &> /dev/null && docker rm $(docker ps -aqf "ancestor=minddocdev/android-sdk") &> /dev/null
 # when the image was built locally
 docker stop $(docker ps -aqf "ancestor=android-sdk") &> /dev/null && docker rm $(docker ps -aqf "ancestor=android-sdk") &> /dev/null
 # more flexible way - doesn't matter where the image comes from
@@ -157,95 +150,7 @@ docker stop $(docker ps -a | grep 'android-sdk' | awk '{ print $1 }') &> /dev/nu
 
 ### Accepting Licenses
 
-A helper script is provided at [`/opt/license_accepter.sh`](https://github.com/thyrlian/AndroidSDK/blob/master/android-sdk/license_accepter.sh) for accepting the SDK and its various licenses.  This is helpful in non-interactive environments such as CI builds.
-
-## SSH
-
-It is also possible if you wanna connect to container via SSH.  There are three different approaches.
-
-* Build an image on your own, with a built-in `authorized_keys`
-
-  ```bash
-  # Put your `id_rsa.pub` under `android-sdk/authorized_keys` (as many as you want)
-  
-  # Build an image
-  docker build -t android-sdk android-sdk
-  
-  # Run a container
-  docker run -d -p 2222:22 -v $(pwd)/sdk:/opt/android-sdk:ro android-sdk
-  ```
-
-* Mount `authorized_keys` file from the host to a container
-
-  ```bash
-  docker run -d -p 2222:22 -v $(pwd)/authorized_keys:/root/.ssh/authorized_keys thyrlian/android-sdk
-  ```
-
-* Copy a local `authorized_keys` file to a container
-
-  ```bash
-  # Create a local `authorized_keys` file, which contains the content from your `id_rsa.pub`
-  
-  # Run a container
-  docker run -d -p 2222:22 -v $(pwd)/sdk:/opt/android-sdk:ro thyrlian/android-sdk
-  
-  # Copy the just created local authorized_keys file to the running container
-  docker cp $(pwd)/authorized_keys `docker ps -aqf "ancestor=thyrlian/android-sdk"`:/root/.ssh/authorized_keys
-  
-  # Set the proper owner and group for authorized_keys file
-  docker exec -it `docker ps -aqf "ancestor=thyrlian/android-sdk"` bash -c 'chown root:root /root/.ssh/authorized_keys'
-  ```
-
-That's it!  Now it's up and running, you can ssh to it
-
-  ```console
-  ssh root@<container_ip_address> -p 2222
-  ```
-
-And, in case you need, you can still attach to the running container (not via ssh) by
-
-  ```console
-  docker exec -it <container_id> /bin/bash
-  ```
-
-<img src="https://github.com/thyrlian/AndroidSDK/blob/master/images/SSH.png?raw=true">
-
-## VNC
-
-Remote access to the container's desktop might be helpful if you plan to run emulator inside the container.
-
-  ```bash
-  # pull the image with VNC support
-  docker pull thyrlian/android-sdk-vnc
-  
-  # spin up a container with SSH
-  # won't work when spin up with interactive session, since the vncserver won't get launched
-  docker run -d -p 5901:5901 -p 2222:22 -v $(pwd)/sdk:/opt/android-sdk thyrlian/android-sdk-vnc
-  ```
-
-When the container is up and running, use your favorite VNC client to connect to it:
-
-* `<container_ip_address>:5901`
-
-* Password (with control): ***android***
-
-* Password (view only): ***docker***
-
-```bash
-# setup and launch emulator inside the container
-# create a new Android Virtual Device
-echo "no" | avdmanager create avd -n test -k "system-images;android-25;google_apis;armeabi-v7a"
-# launch emulator
-emulator -avd test -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &
-```
-
-For more details, please refer to [Emulator section](https://github.com/thyrlian/AndroidSDK#emulator).
-
-<img src="https://github.com/thyrlian/AndroidSDK/blob/master/images/vnc.png?raw=true">
-
-### VNC client recommendation
-
-* macOS: [**Screen Sharing**](https://en.wikipedia.org/wiki/Screen_Sharing)
+A helper script is provided at [`/opt/license_accepter.sh`](https://github.com/minddocdev/AndroidSDK/blob/master/android-sdk/license_accepter.sh) for accepting the SDK and its various licenses.  This is helpful in non-interactive environments such as CI builds.
 
 ## NFS
 
@@ -263,7 +168,7 @@ And here are instructions for configuring a NFS server (on Ubuntu):
   sudo apt-get update
   sudo apt-get install -y nfs-kernel-server
   sudo mkdir -p /var/nfs/android-sdk
-  
+
   # put the Android SDK under /var/nfs/android-sdk
   # if you haven't got any, run below commands
   sudo apt-get install -y wget zip
@@ -275,48 +180,13 @@ And here are instructions for configuring a NFS server (on Ubuntu):
   echo 8933bad161af4178b1185d1a37fbf41ea5269c55 | sudo tee licenses/android-sdk-license > /dev/null
   echo 84831b9409646a918e30573bab4c9c91346d8abd | sudo tee licenses/android-sdk-preview-license > /dev/null
   echo d975f751698a77b662f1254ddbeed3901e976f5a | sudo tee licenses/intel-android-extra-license > /dev/null
-  
+
   # configure and launch NFS service
   sudo chown nobody:nogroup /var/nfs
   echo "/var/nfs         *(rw,sync,no_subtree_check,no_root_squash)" | sudo tee --append /etc/exports > /dev/null
   sudo exportfs -a
   sudo service nfs-kernel-server start
   ```
-
-## Gradle Distributions Mirror Server
-
-There is still room for optimization: recent distribution of Gradle is around 100MB, imagine different containers / build jobs have to perform downloading over and over again, and it has high influence upon your network bandwidth.  Setting up a local Gradle distributions mirror server would significantly boost your download speed.
-
-Fortunately, you can easily build such a mirror server docker image on your own.
-
-  ```bash
-  docker build -t gradle-server gradle-server
-  # by default it downloads the most recent 14 gradle distributions (excluding rc or milestone)
-  # or you can also pass how many gradle distributions should be downloaded
-  docker build --build-arg GRADLE_DOWNLOAD_AMOUNT=<amount_of_gradle_distributions_to_be_downloaded> -t gradle-server gradle-server
-  ```
-
-Preferably, you should run the [download script](https://github.com/thyrlian/AndroidSDK/blob/master/gradle-server/gradle_downloader.sh) locally, and mount the download directory to the container.
-
-  ```bash
-  gradle-server/gradle_downloader.sh [DOWNLOAD_DIRECTORY] [DOWNLOAD_AMOUNT]
-  docker run -d -p 80:80 -p 443:443 -v [DOWNLOAD_DIRECTORY]:/var/www/gradle.org/public_html/distributions gradle-server
-  ```
-
-  ```bash
-  # copy the SSL certificate from gradle server container to host machine
-  docker cp `docker ps -aqf "ancestor=gradle-server"`:/etc/apache2/ssl/apache.crt apache.crt
-  # copy the SSL certificate from host machine to AndroidSDK container
-  docker cp apache.crt `docker ps -aqf "ancestor=thyrlian/android-sdk"`:/home/apache.crt
-  # add self-signed SSL certificate to Java keystore
-  docker exec -it `docker ps -aqf "ancestor=thyrlian/android-sdk"` bash -c '$JAVA_HOME/bin/keytool -import -trustcacerts -file /home/apache.crt -keystore $JAVA_HOME/jre/lib/security/cacerts -storepass changeit -noprompt'
-  # map gradle services domain to your local IP
-  docker exec -it `docker ps -aqf "ancestor=thyrlian/android-sdk"` bash -c 'echo "[YOUR_HOST_IP_ADDRESS_FOR_GRADLE_CONTAINER] services.gradle.org" >> /etc/hosts'
-  ```
-
-Starting from now on, gradle wrapper will download gradle distributions from your local mirror server, lightning fast!  The downloaded distribution will be uncompressed to `/root/.gradle/wrapper/dists`.
-
-If you don't want to bother with SSL certificate, you can simply change the `distributionUrl` inside `[YOUR_PROJECT]/gradle/wrapper/gradle-wrapper.properties` from `https` to `http`.
 
 ## Emulator
 
@@ -345,7 +215,7 @@ Read [KVM Installation](https://help.ubuntu.com/community/KVM/Installation) if y
   # or
   egrep -c '(vmx|svm)' /proc/cpuinfo
   # a non-zero result means the host CPU supports hardware virtualization.
-  
+
   sudo kvm-ok
   # seeing below info means you can run your virtual machine faster with the KVM extensions
   INFO: /dev/kvm exists
@@ -375,7 +245,7 @@ Read [KVM Installation](https://help.ubuntu.com/community/KVM/Installation) if y
   * [Amazon Web Services](https://aws.amazon.com/blogs/compute/running-hyper-v-on-amazon-ec2-bare-metal-instances/)
 
   * [Google Cloud Platform](https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances)
-  
+
   * [IBM Cloud](https://www.ibm.com/developerworks/cloud/library/cl-nestedvirtualization/index.html)
 
   * [Microsoft Azure](https://azure.microsoft.com/en-us/blog/nested-virtualization-in-azure/)
@@ -417,20 +287,20 @@ Read [KVM Installation](https://help.ubuntu.com/community/KVM/Installation) if y
 
   ```bash
   # required by KVM
-  docker run -it --privileged -v $(pwd)/sdk:/opt/android-sdk:ro thyrlian/android-sdk /bin/bash
+  docker run -it --privileged -v $(pwd)/sdk:/opt/android-sdk:ro minddocdev/android-sdk /bin/bash
   ```
 
 * Check acceleration ability (not necessary for ARM emulator)
 
   ```bash
   emulator -accel-check
-  
+
   # when succeeds
   accel:
   0
   KVM (version 12) is installed and usable.
   accel
-  
+
   # when fails (probably due to unprivileged mode)
   accel:
   8
@@ -457,9 +327,9 @@ Read [KVM Installation](https://help.ubuntu.com/community/KVM/Installation) if y
     Target: Default Android System Image
             Based on: Android 7.0 (Nougat) Tag/ABI: default/armeabi-v7a
   # ==================================================
-  
+
   # or
-  
+
   emulator -list-avds
   # 32-bit Linux Android emulator binaries are DEPRECATED
   # ==================================================
@@ -471,7 +341,7 @@ Read [KVM Installation](https://help.ubuntu.com/community/KVM/Installation) if y
 
   ```bash
   emulator -avd <virtual_device_name> -no-audio -no-boot-anim -no-window -accel on -gpu off &
-  
+
   # if the container is not running in privileged mode, you should see below errors:
   #=> emulator: ERROR: x86_64 emulation currently requires hardware acceleration!
   #=> Please ensure KVM is properly installed and usable.
@@ -489,7 +359,7 @@ Read [KVM Installation](https://help.ubuntu.com/community/KVM/Installation) if y
   emulator-5554	offline
   # "offline" means it's still booting up
   # ==================================================
-  
+
   # ==================================================
   List of devices attached
   emulator-5554	device
@@ -515,43 +385,18 @@ You could try:
 
 * Increase the amount of physical RAM on the emulator by setting / changing `hw.ramSize` in the AVD's configuration file (`config.ini`).  By default, it's not set and the default value is "96" (in megabytes).  You could simply set a new value via this command: `echo "hw.ramSize=1024" >> /root/.android/avd/<your_avd_name>.avd/config.ini`
 
-### Access the emulator from outside
-
-Default adb server port: `5037`
-
-  ```bash
-  # spin up a container
-  # with SSH
-  docker run -d -p 5037:5037 -p 2222:22 -v $(pwd)/sdk:/opt/android-sdk thyrlian/android-sdk-vnc
-  # or with interactive session
-  docker run -it -p 5037:5037 -v $(pwd)/sdk:/opt/android-sdk thyrlian/android-sdk-vnc /bin/bash
-  
-  # launch emulator inside the container...
-  ```
-
-Outside the container:
-
-  ```bash
-  adb connect <container_ip_address>:5037
-  adb devices
-  #=> List of devices attached
-  #=> emulator-5554	device
-  ```
-
-Make sure that your **adb client** talks to the **adb server** inside the container, instead of the local one on the host machine.  This can be achieved by running `adb kill-server` (to kill the local server if it's already up) before firing `adb connect` command above.
-
 ## Android Device
 
 You can give a container access to host's USB Android devices.
 
   ```console
   # on Linux
-  docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb -v $(pwd)/sdk:/opt/android-sdk thyrlian/android-sdk /bin/bash
-  
+  docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb -v $(pwd)/sdk:/opt/android-sdk minddocdev/android-sdk /bin/bash
+
   # or
   # try to avoid privileged flag, just add necessary capabilities when possible
   # --device option allows you to run devices inside the container without the --privileged flag
-  docker run -it --device=/dev/ttyUSB0 -v $(pwd)/sdk:/opt/android-sdk thyrlian/android-sdk /bin/bash
+  docker run -it --device=/dev/ttyUSB0 -v $(pwd)/sdk:/opt/android-sdk minddocdev/android-sdk /bin/bash
   ```
 
 Note:
@@ -622,7 +467,7 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
 * **Exit Code** `137` (= 128 + 9 = SIGKILL = Killed)
 
   Example code:
-  
+
     ```bash
     # spin up a container with memory limit (128MB)
     docker run -it -m 128m -v $(pwd)/misc/MemoryFiller:/root/MemoryFiller thyrlian/android-sdk /bin/bash
@@ -632,7 +477,7 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
     ```
 
   Logs:
-  
+
     ```console
     Killed
     ```
@@ -642,10 +487,10 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
 * **Exit Code** `1` (= SIGHUP = Hangup)
 
   Example code:
-  
+
     ```bash
     # spin up a container with memory limit (or without - both lead to the same result)
-    docker run -it -m 128m -v $(pwd)/misc/MemoryFiller:/root/MemoryFiller thyrlian/android-sdk /bin/bash
+    docker run -it -m 128m -v $(pwd)/misc/MemoryFiller:/root/MemoryFiller minddocdev/android-sdk /bin/bash
     # fill memory up
     # enable Docker memory limits transparency for JVM
     cd /root/MemoryFiller && javac MemoryFiller.java
@@ -653,7 +498,7 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
     ```
 
   Logs:
-  
+
     ```console
     Exception in thread "main" java.lang.OutOfMemoryError: Java heap space at MemoryFiller.main(MemoryFiller.java:13)
     ```
@@ -663,10 +508,10 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
 * **Exit Code** `3` (= SIGQUIT = Quit)
 
   Example code:
-  
+
     ```bash
     # spin up a container without memory limit
-    docker run -it -v $(pwd)/misc/MemoryFiller:/root/MemoryFiller thyrlian/android-sdk /bin/bash
+    docker run -it -v $(pwd)/misc/MemoryFiller:/root/MemoryFiller minddocdev/android-sdk /bin/bash
     # fill memory up
     cd /root/MemoryFiller && javac MemoryFiller.java
     # make sure that Docker memory resource is big enough > JVM max heap size
@@ -675,7 +520,7 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
     ```
 
   Logs:
-  
+
     ```console
     Terminating due to java.lang.OutOfMemoryError: Java heap space
     ```
@@ -685,10 +530,10 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
 * **Exit Code** `134` (= 128 + 6 = SIGABRT = Abort)
 
   Example code:
-  
+
     ```bash
     # spin up a container without memory limit
-    docker run -it -v $(pwd)/misc/MemoryFiller:/root/MemoryFiller thyrlian/android-sdk /bin/bash
+    docker run -it -v $(pwd)/misc/MemoryFiller:/root/MemoryFiller minddocdev/android-sdk /bin/bash
     # fill memory up
     cd /root/MemoryFiller && javac MemoryFiller.java
     # make sure that Docker memory resource is big enough > JVM max heap size
@@ -697,7 +542,7 @@ For demonstration, below examples try to execute [MemoryFiller](https://github.c
     ```
 
   Logs:
-  
+
     ```console
     Aborting due to java.lang.OutOfMemoryError: Java heap space
     #
@@ -778,31 +623,11 @@ sudo netstat -tulpn | grep LISTEN
 
 ## Release guide
 
-* Go to the top-level directory of this project
-
-* Execute [`image_publisher.sh`](https://github.com/thyrlian/AndroidSDK/blob/master/image_publisher.sh) script
-
-  ```console
-  ./image_publisher.sh [TAG]
-  ```
-
-* Execute [`version_inspector.sh`](https://github.com/thyrlian/AndroidSDK/blob/master/version_inspector.sh) script inside a docker container from local machine
-
-  ```console
-  cmd=$(cat version_inspector.sh) && docker run -it --rm android-sdk bash -c "$cmd"
-  ```
-
-* Update [Changelog](https://github.com/thyrlian/AndroidSDK/blob/master/CHANGELOG.md)
-
-## Contributing
-
-Your contribution is always welcome, which will for sure make the Android SDK Docker solution better.  Please check the [contributing guide](./CONTRIBUTING.md) to get started!  Thank you ☺
-
-## Changelog
-
-See [here](https://github.com/thyrlian/AndroidSDK/blob/master/CHANGELOG.md).
+Release is published from master automatically with Github actions.
 
 ## License
+
+This is a fork from `thyrlian/AndroidSDK` and its LICENSE applies.
 
 Copyright (c) 2016-2019 Jing Li. It is released under the [Apache License](https://www.apache.org/licenses/LICENSE-2.0). See the [LICENSE](https://raw.githubusercontent.com/thyrlian/AndroidSDK/master/LICENSE) file for details.
 

@@ -1,0 +1,23 @@
+name: "docker"
+
+on: [push]
+
+jobs:
+  docker_publish:
+    name: docker publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: minddocdev/checkout@v1.2.0
+      - name: Build and publish docker image to Dockerhub
+        uses: minddocdev/docker-publish-action@master
+        env:
+          GRADLE_VERSION: 5.5.1
+          KOTLIN_VERSION: 1.3.61
+          ANDROID_SDK_VERSION: 4333796
+        with:
+          name: minddocdev/android-sdk
+          username: minddocbot
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          buildargs: GRADLE_VERSION,KOTLIN_VERSION,ANDROID_SDK_VERSION
+          context: android-sdk
