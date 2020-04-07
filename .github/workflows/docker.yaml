@@ -1,23 +1,42 @@
 name: "docker"
 
-on: [push]
+on:
+  push:
+    tags:
+      - "*"
+    paths:
+      - ".dockerignore"
+      - "Dockerfile"
+
+env:
+  APP: android-sdk
 
 jobs:
-  docker_publish:
-    name: docker publish
+  docker:
+    name: docker build and publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
-        uses: minddocdev/checkout@v1.2.0
-      - name: Build and publish docker image to Dockerhub
-        uses: minddocdev/docker-publish-action@master
-        env:
-          GRADLE_VERSION: 5.5.1
-          KOTLIN_VERSION: 1.3.61
-          ANDROID_SDK_VERSION: 4333796
+        uses: actions/checkout@master
+      - name: Import Secrets
+        uses: minddocdev/vault-action@master
         with:
-          name: minddocdev/android-sdk
-          username: minddocbot
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          buildargs: GRADLE_VERSION,KOTLIN_VERSION,ANDROID_SDK_VERSION
-          context: android-sdk
+          url: ${{ secrets.VAULT_HOST }}
+          token: ${{ secrets.MINDDOCBOT_TOKEN }}
+          secrets: |
+            - path: ${{ secrets.VAULT_PATH }}
+              key: dockerhubUser
+              env: DOCKER_USER
+            - path: ${{ secrets.VAULT_PATH }}
+              key: dockerhubAccessToken
+              env: DOCKER_PASSWORD
+      - name: Set VERSION tag
+        run: echo ::set-env name=VERSION::${GITHUB_REF#refs/tags/}
+      - name: Build and publish docker image to GCP Container Registry
+        uses: minddocdev/mou-docker-action@master
+        with:
+          name: minddocdev/${{ env.APP }}
+          username: ${{ env.DOCKER_USER }}
+          password: ${{ env.DOCKER_PASSWORD }}
+          cache: true
+          tags: latest
