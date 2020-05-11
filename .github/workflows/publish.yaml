@@ -4,16 +4,13 @@ on:
   push:
     tags:
       - "*"
-    paths:
-      - ".dockerignore"
-      - "Dockerfile"
 
 env:
   APP: android-sdk
 
 jobs:
-  docker:
-    name: docker build and publish
+  publish:
+    name: publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout git repository
@@ -38,5 +35,6 @@ jobs:
           name: minddocdev/${{ env.APP }}
           username: ${{ env.DOCKER_USER }}
           password: ${{ env.DOCKER_PASSWORD }}
+          dockerfile: android-sdk/Dockerfile
           cache: true
           tags: latest
