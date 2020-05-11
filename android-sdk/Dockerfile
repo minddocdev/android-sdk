@@ -74,5 +74,8 @@ RUN gem update --system ${RUBYGEMS_VERSION}
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
+# install Firebase CLI
+RUN curl -sL https://firebase.tools | bash
+
 # setup adb server
 EXPOSE 5037
