@@ -23,7 +23,8 @@ RUN dpkg --add-architecture i386 && \
     apt-get install -y --no-install-recommends git wget unzip && \
     apt-get install -y --no-install-recommends qt5-default && \
     apt-get install -y --no-install-recommends ruby ruby-dev g++ make && \
-    apt-get install -y --no-install-recommends curl jq
+    apt-get install -y --no-install-recommends curl jq && \
+    apt-get install -y --no-install-recommends nodejs npm
 
 # download and install Gradle
 # https://services.gradle.org/distributions/
@@ -75,7 +76,7 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # install Firebase CLI
-RUN curl -sL https://firebase.tools | bash
+RUN npm install -g firebase-tools
 
 # setup adb server
 EXPOSE 5037
