@@ -1,0 +1,30 @@
+name: "docker"
+
+on:
+  push:
+    branches:
+    - master
+
+env:
+  APP: android-sdk
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@master
+      - name: Clean old release drafts
+        run: hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | grep "${{
+          env.APP }}@" | awk '{print $1}' | xargs --no-run-if-empty -t -n1 hub release
+          delete
+        env:
+          GITHUB_USER: minddocbot
+          GITHUB_TOKEN: ${{ secrets.MINDDOCBOT_TOKEN }}
+      - name: Create Release Draft
+        uses: minddocdev/mou-release-action@master
+        with:
+          prerelease: false
+          templatePath: RELEASE_DRAFT/default.md
+          token: ${{ secrets.MINDDOCBOT_TOKEN }}
