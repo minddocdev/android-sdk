@@ -28,7 +28,7 @@ RUN dpkg --add-architecture i386 && \
 
 # download and install Gradle
 # https://services.gradle.org/distributions/
-ARG GRADLE_VERSION=5.5.1
+ARG GRADLE_VERSION=6.3
 ARG GRADLE_DIST=bin
 RUN cd /opt && \
     wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-${GRADLE_DIST}.zip && \
@@ -77,6 +77,10 @@ ENV LANG en_US.UTF-8
 
 # install Firebase CLI
 RUN npm install -g firebase-tools
+
+# install Google Cloud SDK
+RUN apk add --update \ python \ curl \ which \ bash
+RUN curl -sSL https://sdk.cloud.google.com | bash ENV PATH $PATH:/root/google-cloud-sdk/bin
 
 # setup adb server
 EXPOSE 5037
